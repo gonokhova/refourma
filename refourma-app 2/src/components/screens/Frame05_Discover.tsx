@@ -69,6 +69,19 @@ export function Frame05_Discover() {
           <em style={{ fontStyle: "italic" }}>at Hanazono.</em>
         </h1>
 
+        {/* Editorial blurb — not realtor copy */}
+        <p
+          className="mb-[16px] text-[12px] leading-[1.5]"
+          style={{
+            color: "rgba(244,239,230,0.85)",
+            fontFamily: "var(--font-display)",
+            fontWeight: 300,
+            fontStyle: "italic",
+          }}
+        >
+          Built into a slope where the river bends. The west wing catches first light at 6:42 in February. Onsen on the lower deck, ski room beside it. The architects measured the snow before they drew.
+        </p>
+
         {/* Price row */}
         <div
           className="mb-[20px] flex items-baseline justify-between border-t py-[10px] text-[10px]"
