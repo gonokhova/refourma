@@ -97,13 +97,63 @@ export type Fraction = {
   price: string;
   status: "taken" | "available";
   weeksPerYear: number;
+  // Detailed differentiation
+  view: string;
+  orientation: string;
+  bedroomsAssigned: string;
+  peakWeeks: string;
+  characterTrait: string;  // a one-line poetic descriptor
+  ownerNote?: string;       // who took it, for taken ones
 };
 
 export const PAGANO_FRACTIONS: Fraction[] = [
-  { name: "Cedar", price: "€2.5M", status: "taken", weeksPerYear: 12 },
-  { name: "Birch", price: "€2.8M", status: "taken", weeksPerYear: 12 },
-  { name: "Maple", price: "€3.1M", status: "taken", weeksPerYear: 12 },
-  { name: "Pine", price: "€4.0M", status: "available", weeksPerYear: 12 },
+  {
+    name: "Cedar",
+    price: "€2.5M",
+    status: "taken",
+    weeksPerYear: 12,
+    view: "Forest, west",
+    orientation: "Quietest wing — sleeps furthest from kitchen",
+    bedroomsAssigned: "Master suite + 1 guest",
+    peakWeeks: "Feb 5 – 11 (Sapporo Snow Festival week)",
+    characterTrait: "The reader's fraction. Library opens onto cedar grove.",
+    ownerNote: "Reserved Mar 2026 · Singapore family",
+  },
+  {
+    name: "Birch",
+    price: "€2.8M",
+    status: "taken",
+    weeksPerYear: 12,
+    view: "Yōtei east face",
+    orientation: "Morning sun direct from 6:42 AM in winter",
+    bedroomsAssigned: "Two bedrooms + tatami room",
+    peakWeeks: "Feb 19 – 25 (post-Festival deep powder)",
+    characterTrait: "The early riser's fraction. First light hits this corner.",
+    ownerNote: "Reserved Apr 2026 · Sydney couple",
+  },
+  {
+    name: "Maple",
+    price: "€3.1M",
+    status: "taken",
+    weeksPerYear: 12,
+    view: "South + onsen deck",
+    orientation: "Direct access to outdoor onsen — the wing the architects favoured",
+    bedroomsAssigned: "Master + 2 children's rooms",
+    peakWeeks: "Dec 27 – Jan 2 (New Year week)",
+    characterTrait: "The host's fraction. Lives closest to the kitchen and the fire.",
+    ownerNote: "Reserved Jun 2026 · Hong Kong family",
+  },
+  {
+    name: "Pine",
+    price: "€4.0M",
+    status: "available",
+    weeksPerYear: 12,
+    view: "River, north",
+    orientation: "Faces the stream — sound of water from every window",
+    bedroomsAssigned: "Master suite + 2 guests",
+    peakWeeks: "Mar 12 – 18 (rotating peak — yours in odd years)",
+    characterTrait: "The walker's fraction. Steps lead from the deck down to the river.",
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────
