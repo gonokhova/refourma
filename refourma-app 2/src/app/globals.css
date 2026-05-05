@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────
+   re:Fourma Design Tokens
+   ───────────────────────────────────────────────────────────────── */
+:root {
+  /* Palette */
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #1a1816;
+  --color-ink-mid: #3a3733;
+  --color-paper: #faf7f1;
+  --color-paper-2: #f4efe5;
+  --color-bone: #f4efe6;
+  --color-ivory: #ebe3d3;
+  --color-ivory-warm: #e0d4bc;
+  --color-rust: #b8451f;
+  --color-gold: #c89545;
+
+  /* Lines & utility */
+  --color-line: rgba(10, 10, 10, 0.14);
+  --color-line-soft: rgba(10, 10, 10, 0.07);
+  --color-muted: rgba(10, 10, 10, 0.62);
+  --color-muted-strong: rgba(10, 10, 10, 0.78);
+
+  /* Fonts */
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  color-scheme: light;
+}
+
+html, body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Animations */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.animate-blink { animation: blink 1.1s steps(2) infinite; }
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+/* Phone screen scrollbars (clean) */
+.phone-screen::-webkit-scrollbar { width: 0; }
+.phone-screen { scrollbar-width: none; }
