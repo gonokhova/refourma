@@ -9,6 +9,10 @@ import { Frame05_Discover } from "@/components/screens/Frame05_Discover";
 import { Frame06_Brief } from "@/components/screens/Frame06_Brief";
 import { Frame07_KYC } from "@/components/screens/Frame07_KYC";
 import { Frame08_Fractions } from "@/components/screens/Frame08_Fractions";
+import { Frame09_Legal } from "@/components/screens/Frame09_Legal";
+import { Frame10_IntakeDesign } from "@/components/screens/Frame10_IntakeDesign";
+import { Frame11_Scenarios } from "@/components/screens/Frame11_Scenarios";
+import { Frame12_CoDesign } from "@/components/screens/Frame12_CoDesign";
 
 /**
  * Renders the current frame inside the phone screen.
@@ -34,6 +38,14 @@ export function FrameRouter() {
       return <Frame07_KYC />;
     case 8:
       return <Frame08_Fractions />;
+    case 9:
+      return <Frame09_Legal />;
+    case 10:
+      return <Frame10_IntakeDesign />;
+    case 11:
+      return <Frame11_Scenarios />;
+    case 12:
+      return <Frame12_CoDesign />;
     default:
       return <PlaceholderFrame frameId={currentFrame} />;
   }
