@@ -13,6 +13,14 @@ import { Frame09_Legal } from "@/components/screens/Frame09_Legal";
 import { Frame10_IntakeDesign } from "@/components/screens/Frame10_IntakeDesign";
 import { Frame11_Scenarios } from "@/components/screens/Frame11_Scenarios";
 import { Frame12_CoDesign } from "@/components/screens/Frame12_CoDesign";
+import { Frame13_Build } from "@/components/screens/Frame13_Build";
+import { Frame14_Agent } from "@/components/screens/Frame14_Agent";
+import { Frame15_Decision } from "@/components/screens/Frame15_Decision";
+import { Frame16_Handover } from "@/components/screens/Frame16_Handover";
+import { Frame17_Calendar } from "@/components/screens/Frame17_Calendar";
+import { Frame18_Operate } from "@/components/screens/Frame18_Operate";
+import { Frame19_Transfer } from "@/components/screens/Frame19_Transfer";
+import { Frame20_Closed } from "@/components/screens/Frame20_Closed";
 
 /**
  * Renders the current frame inside the phone screen.
@@ -22,30 +30,26 @@ export function FrameRouter() {
   const { currentFrame } = useNav();
 
   switch (currentFrame) {
-    case 1:
-      return <Frame01_Intake />;
-    case 2:
-      return <Frame02_Match />;
-    case 3:
-      return <Frame03_Read />;
-    case 4:
-      return <Frame04_Choose />;
-    case 5:
-      return <Frame05_Discover />;
-    case 6:
-      return <Frame06_Brief />;
-    case 7:
-      return <Frame07_KYC />;
-    case 8:
-      return <Frame08_Fractions />;
-    case 9:
-      return <Frame09_Legal />;
-    case 10:
-      return <Frame10_IntakeDesign />;
-    case 11:
-      return <Frame11_Scenarios />;
-    case 12:
-      return <Frame12_CoDesign />;
+    case 1: return <Frame01_Intake />;
+    case 2: return <Frame02_Match />;
+    case 3: return <Frame03_Read />;
+    case 4: return <Frame04_Choose />;
+    case 5: return <Frame05_Discover />;
+    case 6: return <Frame06_Brief />;
+    case 7: return <Frame07_KYC />;
+    case 8: return <Frame08_Fractions />;
+    case 9: return <Frame09_Legal />;
+    case 10: return <Frame10_IntakeDesign />;
+    case 11: return <Frame11_Scenarios />;
+    case 12: return <Frame12_CoDesign />;
+    case 13: return <Frame13_Build />;
+    case 14: return <Frame14_Agent />;
+    case 15: return <Frame15_Decision />;
+    case 16: return <Frame16_Handover />;
+    case 17: return <Frame17_Calendar />;
+    case 18: return <Frame18_Operate />;
+    case 19: return <Frame19_Transfer />;
+    case 20: return <Frame20_Closed />;
     default:
       return <PlaceholderFrame frameId={currentFrame} />;
   }
