@@ -21,10 +21,14 @@ import { Frame17_Calendar } from "@/components/screens/Frame17_Calendar";
 import { Frame18_Operate } from "@/components/screens/Frame18_Operate";
 import { Frame19_Transfer } from "@/components/screens/Frame19_Transfer";
 import { Frame20_Closed } from "@/components/screens/Frame20_Closed";
+import { Frame21_Portal } from "@/components/screens/Frame21_Portal";
+import { Frame22_Refer } from "@/components/screens/Frame22_Refer";
+import { Frame23_Received } from "@/components/screens/Frame23_Received";
+import { Frame24_Network } from "@/components/screens/Frame24_Network";
 
 /**
  * Renders the current frame inside the phone screen.
- * Add new Frames as we build them.
+ * All 24 frames are now connected.
  */
 export function FrameRouter() {
   const { currentFrame } = useNav();
@@ -50,15 +54,15 @@ export function FrameRouter() {
     case 18: return <Frame18_Operate />;
     case 19: return <Frame19_Transfer />;
     case 20: return <Frame20_Closed />;
+    case 21: return <Frame21_Portal />;
+    case 22: return <Frame22_Refer />;
+    case 23: return <Frame23_Received />;
+    case 24: return <Frame24_Network />;
     default:
       return <PlaceholderFrame frameId={currentFrame} />;
   }
 }
 
-/**
- * Shown for frames 5-24 that aren't built yet.
- * Visual placeholder so navigation still works during dev.
- */
 function PlaceholderFrame({ frameId }: { frameId: number }) {
   const { prev, next, canPrev, canNext } = useNav();
   return (
