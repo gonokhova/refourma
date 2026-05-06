@@ -34,8 +34,8 @@ function Stage() {
   const frame = getFrameById(currentFrame);
 
   // Fully dark frames (entire screen on dark bg)
-  // Frame 05 manages its own dark/light split, so not in this list
-  const isDarkFrame = [14, 20, 24].includes(currentFrame);
+  // Frames 5, 14, 23 manage their own dark/light split
+  const isDarkFrame = [20, 24].includes(currentFrame);
 
   return (
     <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-[24px] py-[40px]">
