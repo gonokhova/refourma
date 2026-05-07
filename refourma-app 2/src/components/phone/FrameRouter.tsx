@@ -1,6 +1,7 @@
 "use client";
 
 import { useNav } from "@/lib/nav";
+import { Frame00_Cover } from "@/components/screens/Frame00_Cover";
 import { Frame01_Intake } from "@/components/screens/Frame01_Intake";
 import { Frame02_Match } from "@/components/screens/Frame02_Match";
 import { Frame03_Read } from "@/components/screens/Frame03_Read";
@@ -34,6 +35,7 @@ export function FrameRouter() {
   const { currentFrame } = useNav();
 
   switch (currentFrame) {
+    case 0: return <Frame00_Cover />;
     case 1: return <Frame01_Intake />;
     case 2: return <Frame02_Match />;
     case 3: return <Frame03_Read />;
