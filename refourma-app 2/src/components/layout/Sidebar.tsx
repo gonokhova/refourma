@@ -22,6 +22,31 @@ export function Sidebar() {
           re<span className="italic">:</span>Fourma
         </div>
 
+        {/* Cover entry */}
+        <button
+          onClick={() => goTo(0)}
+          className={`mb-[20px] flex w-full items-baseline gap-[8px] rounded-[4px] px-[8px] py-[5px] text-left transition-colors ${
+            currentFrame === 0
+              ? "bg-[var(--color-ink)] text-[var(--color-bone)]"
+              : "hover:bg-[var(--color-ivory)] text-[var(--color-ink)]"
+          }`}
+        >
+          <span
+            className={`flex-shrink-0 text-[9px] tracking-[0.06em] ${
+              currentFrame === 0 ? "text-[var(--color-bone)]/60" : "text-[var(--color-muted-strong)]"
+            }`}
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            00
+          </span>
+          <span
+            className="text-[12px] leading-[1.2]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Cover
+          </span>
+        </button>
+
         {CHAPTERS.map((ch) => (
           <div key={ch.number} className="mb-[20px]">
             <div
