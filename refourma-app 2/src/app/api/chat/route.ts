@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
+    if (!apiKey) {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
       // Graceful fallback: scripted reply when no API key
       return NextResponse.json({
         reply:
