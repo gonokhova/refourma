@@ -65,7 +65,7 @@ export function Frame00_Cover() {
           className="mb-[20px] text-[12px] leading-[1.5]"
           style={{ color: "rgba(244,239,230,0.75)" }}
         >
-          Twenty-four frames. One phone. <em style={{ fontStyle: "italic" }}>The whole life of a fractional home.</em>
+         <em style={{ fontStyle: "italic" }}>The whole life of a fractional home.</em>
         </p>
 
         {/* Three meta blocks */}
