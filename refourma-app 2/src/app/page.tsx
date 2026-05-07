@@ -5,6 +5,8 @@ import { PhoneFrame } from "@/components/phone/PhoneFrame";
 import { FrameRouter } from "@/components/phone/FrameRouter";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
+import { InvestorOverlay } from "@/components/layout/InvestorOverlay";
+import { ReelProgress } from "@/components/layout/ReelProgress";
 import { getFrameById } from "@/data/projects";
 
 export default function Home() {
@@ -31,18 +33,23 @@ function Layout() {
 
 function Stage() {
   const { currentFrame } = useNav();
-  const frame = getFrameById(currentFrame);
+  const frame = currentFrame > 0 ? getFrameById(currentFrame) : null;
 
-  // Fully dark frames (entire screen on dark bg)
-  // Frames 5, 14, 23 manage their own dark/light split
+  // Fully dark frames where PhoneFrame should use ink bg
+  // Frame 00 (cover), 14, 23 manage their own bg — exclude them
   const isDarkFrame = [20, 24].includes(currentFrame);
 
   return (
-    <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-[24px] py-[40px]">
+    <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-[24px] py-[60px]">
       <div className="flex flex-col items-center gap-[24px]">
-        <PhoneFrame dark={isDarkFrame}>
-          <FrameRouter />
-        </PhoneFrame>
+        {/* Phone with overlays */}
+        <div className="relative">
+          <ReelProgress />
+          <PhoneFrame dark={isDarkFrame}>
+            <FrameRouter />
+          </PhoneFrame>
+          <InvestorOverlay />
+        </div>
 
         {/* Caption under phone */}
         {frame && (
@@ -55,6 +62,20 @@ function Stage() {
             </div>
             <div className="text-[12px] leading-[1.55] text-[var(--color-ink-mid)]">
               {frame.caption}
+            </div>
+          </div>
+        )}
+
+        {currentFrame === 0 && (
+          <div className="max-w-[320px] text-center">
+            <div
+              className="mb-[4px] text-[10px] uppercase tracking-[0.14em] text-[var(--color-muted-strong)]"
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              Cover · Begin demo
+            </div>
+            <div className="text-[12px] leading-[1.55] text-[var(--color-ink-mid)]">
+              Twenty-four frames across six chapters. Tap Begin or use arrows to navigate.
             </div>
           </div>
         )}
