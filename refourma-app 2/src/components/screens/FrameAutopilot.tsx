@@ -2,348 +2,207 @@
 
 import { useNav } from "@/lib/nav";
 
-/* ─── shared primitives ────────────────────────────────── */
+/* ─── types ─────────────────────────────────────────────── */
 
-function PhoneMock({ dark = false, children }: { dark?: boolean; children: React.ReactNode }) {
+type Product = {
+  num: string;
+  name: string;
+  price: string;
+  priceNote: string;
+  what: string;
+  outcome: string;
+  tags: string[];
+};
+
+/* ─── data ──────────────────────────────────────────────── */
+
+const COPILOT_PRODUCTS: Product[] = [
+  {
+    num: "C-00",
+    name: "Property Search",
+    price: "included",
+    priceNote: "",
+    what: "AI scans the full network by criteria — ski-out, weeks, budget, family size. Results ranked by match score with a Buyer's Analyst note.",
+    outcome: "Client sees a curated shortlist in seconds. They choose — AI doesn't decide.",
+    tags: ["Natural language", "12 properties", "Ranked by AI"],
+  },
+  {
+    num: "C-01",
+    name: "AI Investment Advisor",
+    price: "¥30,000",
+    priceNote: "per report",
+    what: "Full ROI analysis, 5-year appreciation model, risk rating, and comparison against other fractions in the network. Sourced from MLIT data.",
+    outcome: "Client pays for data before committing ¥180M. The investment decision stays theirs.",
+    tags: ["ROI & yield", "Risk model", "Network comparison"],
+  },
+  {
+    num: "C-02",
+    name: "Financing Autopilot",
+    price: "¥25,000",
+    priceNote: "flat fee",
+    what: "AI scans 8 Japanese lenders, matches to the client's profile (foreign national, LTV, residency), and models monthly payments side by side.",
+    outcome: "Client picks a bank, applies with one tap. re:Fourma does not handle funds.",
+    tags: ["8 lenders scanned", "Foreign national eligible", "Monthly breakdown"],
+  },
+];
+
+const AUTOPILOT_PRODUCTS: Product[] = [
+  {
+    num: "A-01",
+    name: "Legal Package",
+    price: "¥150,000",
+    priceNote: "per transaction",
+    what: "AI generates all 4 documents — Purchase Agreement, GK Structure Deed, Joint Ownership Agreement, Tax Registration. A licensed Japanese attorney reviews and signs off.",
+    outcome: "Client pays ¥150k instead of ¥700k to a law firm. Ready-to-sign package, not a consultation.",
+    tags: ["4 documents", "Licensed JP attorney", "Fixed price"],
+  },
+  {
+    num: "A-02",
+    name: "Tax Autopilot",
+    price: "¥80,000",
+    priceNote: "per year",
+    what: "AI collects all data from the owner portfolio — Fixed Asset Tax, Consumption Tax, cross-border disclosure. A CPA partner reviews and signs every filing.",
+    outcome: "Covers Japan + country of residency. Auto-renews every February. No manual input needed.",
+    tags: ["JP + home country", "CPA signature", "Auto-renews"],
+  },
+  {
+    num: "A-03",
+    name: "Managed Search",
+    price: "¥50,000",
+    priceNote: "retainer",
+    what: "re:Fourma runs the deal end-to-end: brief, shortlist, virtual tour, AI analysis, negotiation, due diligence, Legal Package. Client approves decisions — agent executes.",
+    outcome: "Client gets the keys. The retainer converts into the Legal Package fee on close.",
+    tags: ["End-to-end", "Negotiation included", "Legal Package bundled"],
+  },
+];
+
+/* ─── atoms ─────────────────────────────────────────────── */
+
+function Badge({ label, color }: { label: string; color: "blue" | "green" }) {
+  const c = color === "blue"
+    ? { background: "#e6f1fb", color: "#1a5fa8" }
+    : { background: "#e1f5ee", color: "#085041" };
+  return (
+    <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, ...c }}>
+      {label}
+    </span>
+  );
+}
+
+function Tag({ label, color }: { label: string; color: "blue" | "green" }) {
+  const c = color === "blue"
+    ? { background: "#e6f1fb", color: "#1a5fa8", border: "0.5px solid #b5d4f4" }
+    : { background: "#e1f5ee", color: "#085041", border: "0.5px solid #9fe1cb" };
+  return (
+    <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, fontWeight: 500, ...c }}>
+      {label}
+    </span>
+  );
+}
+
+function ProductCard({ product, color }: { product: Product; color: "blue" | "green" }) {
+  const accent = color === "blue" ? "#1a5fa8" : "#0f6e56";
+  const accentLight = color === "blue" ? "#e6f1fb" : "#e1f5ee";
+
   return (
     <div
       style={{
-        width: 212, height: 440,
-        background: "#0e0e0c",
-        borderRadius: 38,
-        border: "6px solid #1c1c1a",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.05)",
-        display: "flex", flexDirection: "column",
-        overflow: "hidden", position: "relative", flexShrink: 0,
+        background: "white",
+        border: "0.5px solid rgba(14,14,12,0.10)",
+        borderRadius: 16,
+        padding: "24px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 16,
       }}
     >
-      {/* notch */}
-      <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 80, height: 24, background: "#0e0e0c", borderRadius: "0 0 16px 16px", zIndex: 10 }} />
-      {/* screen */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: dark ? "#0e0e0c" : "#f5f0e8" }}>
-        {/* status bar */}
-        <div style={{ height: 32, padding: "10px 14px 0", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0, zIndex: 5, color: dark ? "rgba(255,255,255,0.55)" : "#2c2b28", fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: 9 }}>
-          <span>9:41</span><span>●●●● WiFi</span>
+      {/* header */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: "#7a7870", marginBottom: 4 }}>
+            {product.num}
+          </div>
+          <div style={{ fontFamily: "var(--font-display,'Fraunces',serif)", fontSize: 20, fontWeight: 400, color: "#0e0e0c", lineHeight: 1.2 }}>
+            {product.name}
+          </div>
         </div>
-        {/* canvas */}
-        <div style={{ flex: 1, overflow: "hidden", padding: "12px 14px 18px", display: "flex", flexDirection: "column" }}>
-          {children}
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <div style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: product.price === "included" ? 13 : 18, fontWeight: 400, color: accent }}>
+            {product.price}
+          </div>
+          {product.priceNote && (
+            <div style={{ fontSize: 11, color: "#7a7870", marginTop: 1 }}>{product.priceNote}</div>
+          )}
         </div>
-        {/* home indicator */}
-        <div style={{ height: 20, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <div style={{ width: 80, height: 3, borderRadius: 2, background: dark ? "rgba(255,255,255,0.25)" : "rgba(14,14,12,0.18)" }} />
+      </div>
+
+      {/* divider */}
+      <div style={{ height: "0.5px", background: "rgba(14,14,12,0.08)" }} />
+
+      {/* what */}
+      <div>
+        <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7a7870", marginBottom: 6 }}>
+          What it does
         </div>
+        <div style={{ fontSize: 13, color: "#2c2b28", lineHeight: 1.6 }}>
+          {product.what}
+        </div>
+      </div>
+
+      {/* outcome */}
+      <div style={{ background: accentLight, borderRadius: 10, padding: "12px 14px" }}>
+        <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: accent, marginBottom: 4 }}>
+          Outcome
+        </div>
+        <div style={{ fontSize: 13, color: accent, lineHeight: 1.5 }}>
+          {product.outcome}
+        </div>
+      </div>
+
+      {/* tags */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {product.tags.map((t) => (
+          <Tag key={t} label={t} color={color} />
+        ))}
       </div>
     </div>
   );
 }
-
-function NavRow({ back, pill, green = true }: { back: string; pill: string; green?: boolean }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-      <span style={{ fontSize: 10, fontWeight: 500, color: green ? "#0f6e56" : "#1a5fa8" }}>{back}</span>
-      <span style={{ fontSize: 9, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", borderRadius: 20, background: green ? "#e1f5ee" : "#e6f1fb", color: green ? "#085041" : "#1a5fa8" }}>{pill}</span>
-    </div>
-  );
-}
-
-function Title({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
-  return <div style={{ fontFamily: "var(--font-display,'Fraunces',serif)", fontSize: 15, fontWeight: 400, lineHeight: 1.2, marginBottom: 3, color: dark ? "#f5f0e8" : "#0e0e0c" }}>{children}</div>;
-}
-
-function Sub({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
-  return <div style={{ fontSize: 11, color: dark ? "rgba(245,240,232,0.45)" : "#7a7870", lineHeight: 1.4, marginBottom: 12 }}>{children}</div>;
-}
-
-function Cta({ children, variant = "green" }: { children: React.ReactNode; variant?: "green" | "blue" | "outline" }) {
-  const s = { green: { background: "#0f6e56", color: "#f5f0e8" }, blue: { background: "#1a5fa8", color: "#f5f0e8" }, outline: { background: "transparent", border: "1px solid rgba(14,14,12,0.12)", color: "#2c2b28" } }[variant];
-  return <div style={{ height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 12px", fontSize: 12, fontWeight: 500, marginTop: "auto", flexShrink: 0, ...s }}>{children}</div>;
-}
-
-/* ─── Screen: Legal Package ────────────────────────────── */
-function ScreenLegal() {
-  const docs = [
-    { icon: "📄", name: "Purchase Agreement",       status: "✓ ready",     color: "#0f6e56" },
-    { icon: "🏢", name: "GK Structure Deed",        status: "✓ ready",     color: "#0f6e56" },
-    { icon: "📋", name: "Joint Ownership Agreement",status: "⟳ in review", color: "#ba7517" },
-    { icon: "🗂",  name: "Tax Registration (JP)",    status: "pending",     color: "#7a7870" },
-  ];
-  return (
-    <PhoneMock>
-      <NavRow back="← Cedar fraction" pill="Autopilot" />
-      <Title>Legal Package</Title>
-      <Sub>AI + licensed attorney review. One fixed fee — no surprises.</Sub>
-      {/* context */}
-      <div style={{ display: "flex", alignItems: "center", background: "#e1f5ee", borderRadius: 8, padding: "7px 10px", marginBottom: 10 }}>
-        <span style={{ fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: "#085041", fontWeight: 500 }}>N-04 Pagano · Pine fraction</span>
-        <span style={{ fontSize: 11, color: "#085041", fontWeight: 500, marginLeft: "auto" }}>¥150,000</span>
-      </div>
-      {/* docs */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10 }}>
-        {docs.map((d) => (
-          <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 8, background: "white", borderRadius: 8, padding: "7px 9px", border: "0.5px solid rgba(14,14,12,0.10)" }}>
-            <div style={{ width: 24, height: 24, borderRadius: 6, background: "#e1f5ee", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, flexShrink: 0 }}>{d.icon}</div>
-            <span style={{ fontSize: 11, fontWeight: 500, color: "#2c2b28", flex: 1 }}>{d.name}</span>
-            <span style={{ fontSize: 9, color: d.color }}>{d.status}</span>
-          </div>
-        ))}
-      </div>
-      {/* trust stack */}
-      <div style={{ background: "white", border: "0.5px solid rgba(14,14,12,0.10)", borderRadius: 8, padding: "8px 10px", marginBottom: 8 }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7a7870", marginBottom: 4 }}>Trust stack</div>
-        <div style={{ display: "flex", gap: 4 }}>
-          {["#0f6e56","#0f6e56","#ba7517","rgba(14,14,12,0.10)"].map((c, i) => (
-            <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: c }} />
-          ))}
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-          {["AI draft","Attorney","Review","Sign"].map((l) => (
-            <span key={l} style={{ fontSize: 9, color: "#7a7870" }}>{l}</span>
-          ))}
-        </div>
-      </div>
-      <Cta variant="green"><span>Review &amp; sign documents</span><span>→</span></Cta>
-    </PhoneMock>
-  );
-}
-
-/* ─── Screen: Tax Autopilot ────────────────────────────── */
-function ScreenTax() {
-  const items = [
-    { name: "Fixed Asset Tax (JP)",    tag: "filed ✓",    dot: "#9fe1cb" },
-    { name: "Consumption Tax reg.",    tag: "filed ✓",    dot: "#9fe1cb" },
-    { name: "Cross-border disclosure", tag: "in progress", dot: "#ba7517" },
-    { name: "CPA signature",           tag: "scheduled",  dot: "rgba(255,255,255,0.2)" },
-  ];
-  return (
-    <PhoneMock dark>
-      <NavRow back="← Owner portal" pill="¥80k / yr" />
-      <Title dark>Tax Autopilot</Title>
-      <Sub dark>2024 filing · Niseko + home country residency</Sub>
-      {/* summary */}
-      <div style={{ background: "rgba(255,255,255,0.05)", border: "0.5px solid rgba(255,255,255,0.09)", borderRadius: 10, padding: "10px 12px", marginBottom: 8 }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(245,240,232,0.4)", marginBottom: 6 }}>Filing overview</div>
-        <div style={{ display: "flex", gap: 6 }}>
-          {[{ t: "Fixed Asset Tax", v: "¥340k" }, { t: "Rental income", v: "¥0" }].map((c) => (
-            <div key={c.t} style={{ flex: 1, background: "rgba(255,255,255,0.06)", borderRadius: 8, padding: "7px 9px" }}>
-              <div style={{ fontSize: 9, color: "rgba(245,240,232,0.45)", marginBottom: 2 }}>{c.t}</div>
-              <div style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: 13, color: "#9fe1cb" }}>{c.v}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* items */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 8 }}>
-        {items.map((it) => (
-          <div key={it.name} style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.04)", border: "0.5px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "7px 9px" }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", flexShrink: 0, background: it.dot }} />
-            <span style={{ fontSize: 11, color: "rgba(245,240,232,0.8)", flex: 1 }}>{it.name}</span>
-            <span style={{ fontSize: 9, color: "rgba(245,240,232,0.35)", whiteSpace: "nowrap" }}>{it.tag}</span>
-          </div>
-        ))}
-      </div>
-      {/* CPA */}
-      <div style={{ background: "rgba(15,110,86,0.15)", border: "0.5px solid rgba(31,158,117,0.25)", borderRadius: 8, padding: "8px 10px", marginBottom: 8 }}>
-        <div style={{ fontSize: 9, color: "rgba(159,225,203,0.7)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 2 }}>CPA review by</div>
-        <div style={{ fontSize: 11, color: "#9fe1cb", fontWeight: 500 }}>Tanaka &amp; Partners · 14 May 2025</div>
-      </div>
-      <div style={{ height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 12px", fontSize: 12, fontWeight: 500, marginTop: "auto", background: "#0f6e56", color: "#f5f0e8" }}>
-        <span>Renew subscription</span>
-        <span style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: 10 }}>¥80,000</span>
-      </div>
-    </PhoneMock>
-  );
-}
-
-/* ─── Screen: Managed Search ───────────────────────────── */
-function ScreenManaged() {
-  const steps = [
-    { done: true,  active: false, n: "✓", label: "Brief & criteria locked",       detail: "Snow · 4 weeks · budget ¥180M · family 5" },
-    { done: true,  active: false, n: "✓", label: "Shortlist — 3 fractions found", detail: "Pagano Cedar, Hakuba Mori A, Mori B" },
-    { done: true,  active: false, n: "✓", label: "Virtual tour & AI analysis",    detail: "ROI: 6.2% · risk: low · recommended Mori A" },
-    { done: false, active: true,  n: "→", label: "Negotiation in progress",        detail: "Asking ¥185M · counter ¥172M · gap ¥13M" },
-    { done: false, active: false, n: "5", label: "Due diligence + Legal Package",  detail: "Scheduled after offer accepted" },
-  ];
-  return (
-    <PhoneMock>
-      <NavRow back="← Discovery" pill="Active" green={false} />
-      <Title>Managed Search</Title>
-      <Sub>Retainer ¥50,000 · re:Fourma closes the deal.</Sub>
-      {/* live */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#faeeda", borderRadius: 8, padding: "7px 10px", marginBottom: 10 }}>
-        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#ba7517", flexShrink: 0, animation: "rf-pulse 1.8s ease-in-out infinite" }} />
-        <span style={{ fontSize: 10, color: "#ba7517", fontWeight: 500, flex: 1 }}>Negotiating with seller — Hakuba N-07</span>
-        <span style={{ fontSize: 10, color: "#ba7517", fontFamily: "var(--font-mono,'JetBrains Mono',monospace)" }}>Day 18</span>
-      </div>
-      {/* timeline */}
-      <div style={{ display: "flex", flexDirection: "column", marginBottom: 8 }}>
-        {steps.map((s, i) => (
-          <div key={i} style={{ display: "flex", gap: 8, position: "relative" }}>
-            {i < steps.length - 1 && <div style={{ position: "absolute", left: 8, top: 20, width: 1, height: "calc(100% - 4px)", background: "rgba(14,14,12,0.10)" }} />}
-            <div style={{ width: 17, height: 17, borderRadius: "50%", flexShrink: 0, marginTop: 3, fontSize: 7, zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: s.done ? "#0f6e56" : s.active ? "#faeeda" : "white", border: `1.5px solid ${s.done ? "#0f6e56" : s.active ? "#ba7517" : "rgba(14,14,12,0.10)"}`, color: s.done ? "white" : s.active ? "#ba7517" : "#7a7870" }}>{s.n}</div>
-            <div style={{ paddingBottom: 8, flex: 1 }}>
-              <div style={{ fontSize: 11, fontWeight: 500, color: "#2c2b28", marginBottom: 1 }}>{s.label}</div>
-              <div style={{ fontSize: 10, color: "#7a7870", lineHeight: 1.4 }}>{s.detail}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      {/* analyst */}
-      <div style={{ background: "white", border: "0.5px solid rgba(14,14,12,0.10)", borderRadius: 8, padding: "8px 10px", marginBottom: 8 }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.07em", textTransform: "uppercase", color: "#7a7870", marginBottom: 3 }}>Analyst note</div>
-        <div style={{ fontSize: 11, color: "#2c2b28", lineHeight: 1.4 }}>Seller motivated — Q4 deadline. Likely to close at ¥175–178M. Recommend holding counter.</div>
-      </div>
-      <Cta variant="outline"><span>Message your deal lead</span><span>→</span></Cta>
-    </PhoneMock>
-  );
-}
-
-/* ─── Screen: AI Investment Advisor ───────────────────── */
-function ScreenAdvisor() {
-  return (
-    <PhoneMock>
-      <NavRow back="← Pagano Cedar" pill="¥30k / report" green={false} />
-      <Title>Investment Report</Title>
-      <Sub>N-04 Pagano · Cedar fraction · Niseko market</Sub>
-      {/* ROI */}
-      <div style={{ background: "white", border: "0.5px solid rgba(14,14,12,0.10)", borderRadius: 10, padding: "10px 12px", marginBottom: 8 }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7a7870", marginBottom: 8 }}>Return overview</div>
-        <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
-          {[{ t: "Gross ROI", v: "6.2%" }, { t: "5-yr appreciation", v: "+34%" }].map((c) => (
-            <div key={c.t} style={{ flex: 1, background: "#e6f1fb", borderRadius: 8, padding: "7px 9px" }}>
-              <div style={{ fontSize: 9, color: "#1a5fa8", marginBottom: 2 }}>{c.t}</div>
-              <div style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: 14, color: "#1a5fa8" }}>{c.v}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{ fontSize: 9, color: "#7a7870", marginBottom: 3 }}>Risk level — Low</div>
-        <div style={{ height: 4, background: "rgba(14,14,12,0.10)", borderRadius: 2 }}>
-          <div style={{ width: "28%", height: "100%", borderRadius: 2, background: "#0f6e56" }} />
-        </div>
-      </div>
-      {/* insights */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 8 }}>
-        {[
-          { dot: "#1a5fa8", text: "Cedar has highest peak-week allocation of all 4 fractions", val: "8 wk" },
-          { dot: "#0f6e56", text: "Niseko land values +12% YoY since 2021 — sustained demand", val: "+12%" },
-          { dot: "#ba7517", text: "Q4 2027 completion adds 18-month construction risk window", val: "18 mo" },
-        ].map((ins, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "white", border: "0.5px solid rgba(14,14,12,0.10)", borderRadius: 8, padding: "7px 9px" }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", marginTop: 3, flexShrink: 0, background: ins.dot }} />
-            <div style={{ fontSize: 10, color: "#2c2b28", lineHeight: 1.4, flex: 1 }}>{ins.text}</div>
-            <div style={{ fontSize: 10, color: "#7a7870", whiteSpace: "nowrap", fontFamily: "var(--font-mono,'JetBrains Mono',monospace)" }}>{ins.val}</div>
-          </div>
-        ))}
-      </div>
-      {/* comparison bars */}
-      <div style={{ marginBottom: 8 }}>
-        {[
-          { name: "Pagano Cedar", pct: 92, color: "#1a5fa8", val: "6.2%" },
-          { name: "Hakuba Mori A", pct: 78, color: "#0f6e56", val: "5.3%" },
-          { name: "Revelstoke Cedar", pct: 60, color: "#7a7870", val: "4.1%" },
-        ].map((row, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 0", borderBottom: i < 2 ? "0.5px solid rgba(14,14,12,0.10)" : "none" }}>
-            <span style={{ fontSize: 10, color: "#7a7870", flex: 1 }}>{row.name}</span>
-            <div style={{ flex: 2, height: 3, background: "rgba(14,14,12,0.10)", borderRadius: 2 }}>
-              <div style={{ width: `${row.pct}%`, height: "100%", borderRadius: 2, background: row.color }} />
-            </div>
-            <span style={{ fontSize: 10, fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", color: "#2c2b28", minWidth: 28, textAlign: "right" }}>{row.val}</span>
-          </div>
-        ))}
-      </div>
-      <Cta variant="blue"><span>Download full report</span><span>→</span></Cta>
-    </PhoneMock>
-  );
-}
-
-/* ─── Screen: Financing Autopilot ──────────────────────── */
-function ScreenFinancing() {
-  const banks = [
-    { name: "SMBC · Housing Loan",        rate: "1.84%", sel: true },
-    { name: "Shinsei · Foreign National", rate: "2.10%", sel: false },
-    { name: "MUFG · Premium Real Estate", rate: "2.35%", sel: false },
-  ];
-  return (
-    <PhoneMock>
-      <NavRow back="← Investment Report" pill="¥25k" green={false} />
-      <Title>Financing Options</Title>
-      <Sub>AI scanned 8 Japanese lenders. Best 3 matched to your profile.</Sub>
-      {/* loan hero */}
-      <div style={{ background: "#e6f1fb", borderRadius: 10, padding: "10px 12px", marginBottom: 8 }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: "#1a5fa8", marginBottom: 6 }}>Loan amount</div>
-        <div style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: 20, color: "#1a5fa8" }}>¥124,600,000</div>
-        <div style={{ fontSize: 10, color: "#1a5fa8", opacity: 0.6, marginTop: 1 }}>70% LTV · Cedar fraction · N-04 Pagano</div>
-      </div>
-      {/* banks */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 8 }}>
-        {banks.map((b) => (
-          <div key={b.name} style={{ display: "flex", alignItems: "center", gap: 8, background: b.sel ? "#e6f1fb" : "white", border: `0.5px solid ${b.sel ? "#1a5fa8" : "rgba(14,14,12,0.10)"}`, borderRadius: 8, padding: "7px 9px" }}>
-            <div style={{ width: 14, height: 14, borderRadius: "50%", flexShrink: 0, border: `1.5px solid ${b.sel ? "#1a5fa8" : "rgba(14,14,12,0.10)"}`, background: b.sel ? "#1a5fa8" : "transparent" }} />
-            <span style={{ fontSize: 11, fontWeight: 500, color: b.sel ? "#1a5fa8" : "#2c2b28", flex: 1 }}>{b.name}</span>
-            <span style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: 11, color: "#0f6e56" }}>{b.rate}</span>
-          </div>
-        ))}
-      </div>
-      {/* breakdown */}
-      <div style={{ background: "white", border: "0.5px solid rgba(14,14,12,0.10)", borderRadius: 8, padding: "8px 10px", marginBottom: 8 }}>
-        <div style={{ fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7a7870", marginBottom: 6 }}>Monthly breakdown · SMBC</div>
-        {[{ k: "Principal + interest", v: "¥412,000" }, { k: "Fixed Asset Tax est.", v: "¥28,300" }, { k: "Management fee", v: "¥18,000" }].map((r) => (
-          <div key={r.k} style={{ display: "flex", justifyContent: "space-between", fontSize: 10, padding: "2px 0" }}>
-            <span style={{ color: "#7a7870" }}>{r.k}</span>
-            <span style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", color: "#2c2b28" }}>{r.v}</span>
-          </div>
-        ))}
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, padding: "4px 0 0", borderTop: "0.5px solid rgba(14,14,12,0.10)", marginTop: 4 }}>
-          <span style={{ color: "#2c2b28", fontWeight: 500 }}>Total / month</span>
-          <span style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", color: "#1a5fa8", fontWeight: 500 }}>¥458,300</span>
-        </div>
-      </div>
-      <Cta variant="blue"><span>Apply with SMBC</span><span>→</span></Cta>
-    </PhoneMock>
-  );
-}
-
-/* ─── layout helpers ───────────────────────────────────── */
 
 function SectionHeader({ badge, badgeColor, title, desc }: { badge: string; badgeColor: "blue" | "green"; title: string; desc: string }) {
-  const c = badgeColor === "blue" ? { bg: "#e6f1fb", text: "#1a5fa8" } : { bg: "#e1f5ee", text: "#085041" };
   return (
-    <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 28 }}>
-      <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, ...c }}>{badge}</span>
-      <span style={{ fontFamily: "var(--font-display,'Fraunces',serif)", fontSize: 26, fontWeight: 400, fontStyle: "italic" }}>{title}</span>
-      <span style={{ fontSize: 13, color: "#7a7870", flex: 1, lineHeight: 1.5 }}>{desc}</span>
-    </div>
-  );
-}
-
-function PhoneCell({ num, title, caption, children }: { num: string; title: string; caption: string; children: React.ReactNode }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: "#7a7870" }}>{num}</span>
-        <span style={{ fontSize: 14, fontWeight: 500, color: "#0e0e0c" }}>{title}</span>
+    <div style={{ marginBottom: 28 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+        <Badge label={badge} color={badgeColor} />
+        <span style={{ fontFamily: "var(--font-display,'Fraunces',serif)", fontSize: 28, fontWeight: 400, fontStyle: "italic", lineHeight: 1 }}>
+          {title}
+        </span>
       </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>{children}</div>
-      <p style={{ fontSize: 12, color: "#7a7870", lineHeight: 1.5 }} dangerouslySetInnerHTML={{ __html: caption }} />
+      <div style={{ fontSize: 14, color: "#7a7870", lineHeight: 1.6, maxWidth: 560 }}>
+        {desc}
+      </div>
     </div>
   );
 }
 
-function Banner({ icon, color, label, desc, pills }: { icon: string; color: "green" | "blue"; label: string; desc: string; pills: string[] }) {
+function Banner({ color, label, desc, pills }: { color: "green" | "blue"; label: string; desc: string; pills: string[] }) {
   const c = color === "green"
     ? { border: "#9fe1cb", iconBg: "#e1f5ee", labelColor: "#0f6e56", pillBg: "#e1f5ee", pillColor: "#085041", pillBorder: "#9fe1cb" }
     : { border: "#b5d4f4", iconBg: "#e6f1fb", labelColor: "#1a5fa8", pillBg: "#e6f1fb", pillColor: "#1a5fa8", pillBorder: "#b5d4f4" };
   return (
-    <div style={{ border: `1px dashed ${c.border}`, borderRadius: 14, padding: "16px 20px", display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 32 }}>
-      <div style={{ width: 36, height: 36, borderRadius: 10, background: c.iconBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{icon}</div>
-      <div>
-        <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: c.labelColor, marginBottom: 4 }}>{label}</div>
-        <div style={{ fontSize: 13, color: "#7a7870", lineHeight: 1.5, marginBottom: 10 }}>{desc}</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {pills.map((p) => (
-            <span key={p} style={{ fontSize: 11, padding: "4px 11px", borderRadius: 20, fontWeight: 500, background: c.pillBg, color: c.pillColor, border: `0.5px solid ${c.pillBorder}` }}>{p}</span>
-          ))}
-        </div>
+    <div style={{ border: `1px dashed ${c.border}`, borderRadius: 14, padding: "20px 24px", marginTop: 32 }}>
+      <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: c.labelColor, marginBottom: 6 }}>
+        {label}
+      </div>
+      <div style={{ fontSize: 13, color: "#7a7870", lineHeight: 1.6, marginBottom: 14 }}>
+        {desc}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {pills.map((p) => (
+          <span key={p} style={{ fontSize: 11, padding: "4px 12px", borderRadius: 20, fontWeight: 500, background: c.pillBg, color: c.pillColor, border: `0.5px solid ${c.pillBorder}` }}>
+            {p}
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -351,31 +210,29 @@ function Banner({ icon, color, label, desc, pills }: { icon: string; color: "gre
 
 function Principles({ items }: { items: { num: string; ttl: string; body: string }[] }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20, marginBottom: 56 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20, marginTop: 40, paddingTop: 32, borderTop: "0.5px solid rgba(14,14,12,0.08)" }}>
       {items.map((p) => (
-        <div key={p.num} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div key={p.num} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <span style={{ fontFamily: "var(--font-mono,'JetBrains Mono',monospace)", fontSize: 10, color: "#7a7870" }}>{p.num}</span>
-          <span style={{ fontSize: 13, fontWeight: 500, color: "#2c2b28" }}>{p.ttl}</span>
-          <span style={{ fontSize: 11, color: "#7a7870", lineHeight: 1.5 }}>{p.body}</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: "#2c2b28" }}>{p.ttl}</span>
+          <span style={{ fontSize: 12, color: "#7a7870", lineHeight: 1.6 }}>{p.body}</span>
         </div>
       ))}
     </div>
   );
 }
 
-/* ─── main export ──────────────────────────────────────── */
+/* ─── main ──────────────────────────────────────────────── */
 
 export default function FrameAutopilot() {
   const { prev } = useNav();
 
   return (
-    <>
-      <style>{`@keyframes rf-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}`}</style>
+    <div style={{ padding: "48px 32px 64px", background: "var(--color-paper,#faf7f2)", minHeight: "100%", overflowY: "auto" }}>
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
 
-      <div style={{ padding: "48px 24px 64px", background: "var(--color-paper,#faf7f2)", minHeight: "100%", overflowY: "auto" }}>
-
-        {/* header */}
-        <div style={{ maxWidth: 760, margin: "0 auto 48px" }}>
+        {/* page header */}
+        <div style={{ marginBottom: 48 }}>
           <div style={{ fontFamily: "var(--font-display,'Fraunces',serif)", fontSize: 22, fontWeight: 400, letterSpacing: "-0.5px", marginBottom: 6 }}>
             re<span style={{ color: "#7a7870" }}>:</span>Fourma
           </div>
@@ -385,71 +242,89 @@ export default function FrameAutopilot() {
         </div>
 
         {/* divider */}
-        <div style={{ maxWidth: 760, margin: "0 auto 56px", display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 56 }}>
           <div style={{ flex: 1, height: "0.5px", background: "rgba(14,14,12,0.10)" }} />
-          <span style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#7a7870", whiteSpace: "nowrap" }}>Copilot sells the tool · Autopilot sells the work</span>
+          <span style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#7a7870", whiteSpace: "nowrap" }}>
+            Copilot sells the tool · Autopilot sells the work
+          </span>
           <div style={{ flex: 1, height: "0.5px", background: "rgba(14,14,12,0.10)" }} />
         </div>
 
         {/* ── COPILOT ── */}
-        <div style={{ maxWidth: 760, margin: "0 auto" }}>
-          <SectionHeader badge="Copilot Layer" badgeColor="blue" title="sells the tool" desc="AI augments the client's decision. The human stays in control — AI delivers the insight, the client makes the call." />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24, marginBottom: 28 }}>
-            <PhoneCell num="C-00 / Property Search" title="AI finds the match" caption="<strong>Property Search.</strong> Client describes criteria in plain language. AI ranks results by match score and surfaces a Buyer's Analyst note. Client chooses — AI doesn't decide.">
-              <ScreenAdvisor />
-            </PhoneCell>
-            <PhoneCell num="C-01 / AI Investment Advisor" title="Know before you commit" caption="<strong>AI Investment Advisor.</strong> ¥30k per report — AI analyses ROI, appreciation, risk, compares against the network. Client pays for data; the investment decision is theirs.">
-              <ScreenAdvisor />
-            </PhoneCell>
-            <PhoneCell num="C-02 / Financing Autopilot" title="Model the mortgage" caption="<strong>Financing Autopilot.</strong> ¥25k flat fee — AI scans Japanese lenders, matches to client profile, models monthly payments. Client picks a bank and applies.">
-              <ScreenFinancing />
-            </PhoneCell>
-          </div>
-          <Banner icon="◆" color="blue" label="Copilot layer — the client decides, AI informs"
-            desc="Copilot products trigger at the decision point: Investment Advisor before committing to a fraction, Financing Autopilot before signing a loan. One-time fees, no subscription needed. They naturally lead into Autopilot products."
-            pills={["Property Search · included", "AI Investment Advisor · ¥30k / report", "Financing Autopilot · ¥25k"]}
-          />
-          <Principles items={[
-            { num: "01", ttl: "Copilot = sell the tool", body: "AI surfaces insight the client couldn't access alone. They stay in control — the decision is always theirs." },
-            { num: "02", ttl: "One-time, high-value", body: "Client pays once at the right moment — before a ¥180M commitment, the ¥30k report is an obvious buy." },
-            { num: "03", ttl: "Gateway to Autopilot", body: "Every Copilot sale is a warm lead for the Autopilot layer. The same client needs Legal Package and Tax Autopilot next." },
-          ]} />
+        <SectionHeader
+          badge="Copilot Layer"
+          badgeColor="blue"
+          title="sells the tool"
+          desc="AI augments the client's decision. The human stays in control — AI delivers the insight, the client makes the call. One-time fees at the moment of decision."
+        />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+          {COPILOT_PRODUCTS.map((p) => (
+            <ProductCard key={p.num} product={p} color="blue" />
+          ))}
         </div>
+
+        <Banner
+          color="blue"
+          label="Copilot layer — the client decides, AI informs"
+          desc="Copilot products trigger at the decision point: Investment Advisor before committing to a fraction, Financing Autopilot before signing a loan. Every Copilot sale is a warm lead for the Autopilot layer."
+          pills={["Property Search · included", "AI Investment Advisor · ¥30k / report", "Financing Autopilot · ¥25k"]}
+        />
+
+        <Principles items={[
+          { num: "01", ttl: "Copilot = sell the tool", body: "AI surfaces insight the client couldn't access alone. They stay in control — the decision is always theirs." },
+          { num: "02", ttl: "One-time, high-value", body: "Client pays once at the right moment — before a ¥180M commitment, the ¥30k report is an obvious buy." },
+          { num: "03", ttl: "Gateway to Autopilot", body: "Every Copilot sale is a warm lead for the Autopilot layer. The same client needs Legal Package and Tax Autopilot next." },
+        ]} />
+
+        {/* spacer */}
+        <div style={{ height: 72 }} />
 
         {/* ── AUTOPILOT ── */}
-        <div style={{ maxWidth: 760, margin: "0 auto" }}>
-          <SectionHeader badge="Autopilot Layer" badgeColor="green" title="sells the work" desc="AI completes the task end-to-end. The client buys an outcome — documents ready, taxes filed, deal closed." />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24, marginBottom: 28 }}>
-            <PhoneCell num="08b / Legal Package" title="Documents under control" caption="<strong>Legal Package.</strong> AI generates all 4 documents; a licensed Japanese attorney reviews them. Client pays ¥150k instead of ¥700k to a law firm. The outcome is a ready-to-sign package — not a consultation.">
-              <ScreenLegal />
-            </PhoneCell>
-            <PhoneCell num="21b / Tax Autopilot" title="Taxes handled, annually" caption="<strong>Tax Autopilot.</strong> ¥80k / year — AI collects all data from the owner portfolio, a CPA signs off. Covers Japan + country of residency. Pure subscription: auto-renews every February.">
-              <ScreenTax />
-            </PhoneCell>
-            <PhoneCell num="02b / Managed Search" title="We close it for you" caption="<strong>Managed Search.</strong> ¥50k retainer — re:Fourma runs the deal end-to-end: analysis, negotiation, due diligence, Legal Package. The client gets the keys.">
-              <ScreenManaged />
-            </PhoneCell>
-          </div>
-          <Banner icon="↻" color="green" label="Subscription layer — this can be recurring revenue"
-            desc="Tax Autopilot auto-renews annually. Legal Package triggers with every new transaction. Managed Search runs on retainer until close. Together they shift re:Fourma from a transaction business into an ARR company — LTV 5–10× the first deal."
-            pills={["Legal Package · ¥150k / deal", "Tax Autopilot · ¥80k / year", "Managed Search · ¥50k retainer", "AI Investment Advisor · ¥30k / report", "Financing Autopilot · ¥25k"]}
-          />
-          <Principles items={[
-            { num: "01", ttl: "Autopilot = sell the work", body: "Every model upgrade makes the service cheaper to deliver. Margin grows automatically." },
-            { num: "02", ttl: "Trust stack — not optional", body: "AI draft → attorney review → client sign. Responsibility is distributed; clients trust the result." },
-            { num: "03", ttl: "Outsourcing as wedge", body: "Legal and tax work is already outsourced. The budget line exists. re:Fourma is a vendor swap — not a reorg." },
-          ]} />
+        <SectionHeader
+          badge="Autopilot Layer"
+          badgeColor="green"
+          title="sells the work"
+          desc="AI completes the task end-to-end. The client buys an outcome — documents ready, taxes filed, deal closed. Naturally recurring: same client, same need, every year."
+        />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+          {AUTOPILOT_PRODUCTS.map((p) => (
+            <ProductCard key={p.num} product={p} color="green" />
+          ))}
         </div>
 
+        <Banner
+          color="green"
+          label="Subscription layer — this can be recurring revenue"
+          desc="Tax Autopilot auto-renews annually. Legal Package triggers with every new transaction. Managed Search runs on retainer until close. Together they shift re:Fourma from a transaction business into an ARR company — LTV 5–10× the first deal."
+          pills={[
+            "Legal Package · ¥150k / deal",
+            "Tax Autopilot · ¥80k / year",
+            "Managed Search · ¥50k retainer",
+            "AI Investment Advisor · ¥30k / report",
+            "Financing Autopilot · ¥25k",
+          ]}
+        />
+
+        <Principles items={[
+          { num: "01", ttl: "Autopilot = sell the work", body: "Every model upgrade makes the service cheaper to deliver. Margin grows automatically." },
+          { num: "02", ttl: "Trust stack — not optional", body: "AI draft → attorney review → client sign. Responsibility is distributed; clients trust the result." },
+          { num: "03", ttl: "Outsourcing as wedge", body: "Legal and tax work is already outsourced. The budget line exists. re:Fourma is a vendor swap — not a reorg." },
+        ]} />
+
         {/* footer */}
-        <div style={{ maxWidth: 760, margin: "0 auto", paddingTop: 20, borderTop: "0.5px solid rgba(14,14,12,0.10)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <button onClick={prev} style={{ fontSize: 12, color: "#0f6e56", fontWeight: 500, background: "none", border: "none", cursor: "pointer" }}>
+        <div style={{ marginTop: 56, paddingTop: 20, borderTop: "0.5px solid rgba(14,14,12,0.10)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <button
+            onClick={prev}
+            style={{ fontSize: 12, color: "#0f6e56", fontWeight: 500, background: "none", border: "none", cursor: "pointer" }}
+          >
             ← Back to prototype
           </button>
           <div style={{ fontSize: 11, color: "#7a7870" }}>re:Fourma · Product Layer · v.01</div>
         </div>
 
       </div>
-    </>
+    </div>
   );
 }
