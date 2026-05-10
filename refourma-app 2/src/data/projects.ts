@@ -492,6 +492,21 @@ export const CHAPTERS: Chapter[] = [
       },
     ],
   },
+  {
+    number: "06",
+    name: "Product Layer",
+    description: "Copilot sells the tool. Autopilot sells the work.",
+    frames: [
+      {
+        id: 25,
+        slug: "autopilot",
+        number: "25",
+        title: "Copilot & Autopilot",
+        subtitle: "Legal · Tax · Search · Advisor · Financing",
+        caption: "The subscription layer that turns re:Fourma into an ARR company.",
+      },
+    ],
+  },
 ];
 
 // Helper: get all frames flat
