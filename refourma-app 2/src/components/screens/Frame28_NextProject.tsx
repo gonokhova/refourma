@@ -121,19 +121,24 @@ export function Frame28_NextProject() {
 
           {/* stats */}
           <div
-            className="flex divide-x px-0"
+            className="flex px-0"
             style={{
               background: "white",
               borderTop: "0.5px solid rgba(14,14,12,0.08)",
-              divideColor: "rgba(14,14,12,0.08)",
             }}
           >
             {[
               { label: "From", val: "€1.8M" },
               { label: "Yield", val: "5.2%" },
               { label: "Weeks", val: "12 / yr" },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-1 flex-col items-center py-[8px]">
+            ].map((s, i) => (
+              <div
+                key={s.label}
+                className="flex flex-1 flex-col items-center py-[8px]"
+                style={{
+                  borderLeft: i > 0 ? "0.5px solid rgba(14,14,12,0.08)" : "none",
+                }}
+              >
                 <div
                   className="text-[9px]"
                   style={{ color: "var(--color-muted,#7a7870)" }}
