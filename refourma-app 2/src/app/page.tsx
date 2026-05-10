@@ -39,6 +39,15 @@ function Stage() {
   // Frame 00 (cover), 14, 23 manage their own bg — exclude them
   const isDarkFrame = [20, 24].includes(currentFrame);
 
+  // Frame 25 is a full-page info screen — no phone frame
+  if (currentFrame === 25) {
+    return (
+      <div className="min-h-[calc(100vh-65px)] overflow-y-auto">
+        <FrameRouter />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-[24px] py-[60px]">
       <div className="flex flex-col items-center gap-[24px]">
