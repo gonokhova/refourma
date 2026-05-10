@@ -27,25 +27,28 @@ import { Frame22_Refer } from "@/components/screens/Frame22_Refer";
 import { Frame23_Received } from "@/components/screens/Frame23_Received";
 import { Frame24_Network } from "@/components/screens/Frame24_Network";
 import FrameAutopilot from "@/components/screens/FrameAutopilot";
+import { Frame26_AgentMemory } from "@/components/screens/Frame26_AgentMemory";
+import { Frame27_HowItWorks } from "@/components/screens/Frame27_HowItWorks";
+import { Frame28_NextProject } from "@/components/screens/Frame28_NextProject";
 
 /**
  * Renders the current frame inside the phone screen.
- * Frames 0–24 + frame 25: Copilot & Autopilot product layer.
+ * All 24 frames are now connected.
  */
 export function FrameRouter() {
   const { currentFrame } = useNav();
 
   switch (currentFrame) {
-    case 0:  return <Frame00_Cover />;
-    case 1:  return <Frame01_Intake />;
-    case 2:  return <Frame02_Match />;
-    case 3:  return <Frame03_Read />;
-    case 4:  return <Frame04_Choose />;
-    case 5:  return <Frame05_Discover />;
-    case 6:  return <Frame06_Brief />;
-    case 7:  return <Frame07_KYC />;
-    case 8:  return <Frame08_Fractions />;
-    case 9:  return <Frame09_Legal />;
+    case 0: return <Frame00_Cover />;
+    case 1: return <Frame01_Intake />;
+    case 2: return <Frame02_Match />;
+    case 3: return <Frame03_Read />;
+    case 4: return <Frame04_Choose />;
+    case 5: return <Frame05_Discover />;
+    case 6: return <Frame06_Brief />;
+    case 7: return <Frame07_KYC />;
+    case 8: return <Frame08_Fractions />;
+    case 9: return <Frame09_Legal />;
     case 10: return <Frame10_IntakeDesign />;
     case 11: return <Frame11_Scenarios />;
     case 12: return <Frame12_CoDesign />;
@@ -62,6 +65,9 @@ export function FrameRouter() {
     case 23: return <Frame23_Received />;
     case 24: return <Frame24_Network />;
     case 25: return <FrameAutopilot />;
+    case 26: return <Frame26_AgentMemory />;
+    case 27: return <Frame27_HowItWorks />;
+    case 28: return <Frame28_NextProject />;
     default:
       return <PlaceholderFrame frameId={currentFrame} />;
   }
