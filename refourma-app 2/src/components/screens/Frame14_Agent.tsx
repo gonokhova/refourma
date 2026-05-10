@@ -6,12 +6,23 @@ const HERO_IMAGE = "/images/exterior-night.jpg";
 
 const NOTIFICATIONS = [
   {
+    when: "just now",
+    body: (
+      <>
+        Your agent negotiated directly with seller&apos;s agent —{" "}
+        <b className="font-medium text-[var(--color-bone)]">counter accepted at ¥176M</b>. Approve to proceed.
+      </>
+    ),
+    highlight: true,
+  },
+  {
     when: "2m ago",
     body: (
       <>
         Cedar shipment delayed 11 days. <b className="font-medium text-[var(--color-bone)]">Your decision needed</b> — alternative source approved.
       </>
     ),
+    highlight: false,
   },
   {
     when: "1h ago",
@@ -20,10 +31,12 @@ const NOTIFICATIONS = [
         Group vote closing: <b className="font-medium text-[var(--color-bone)]">onsen finish</b>. Sofia voted outdoor.
       </>
     ),
+    highlight: false,
   },
   {
     when: "Yesterday",
     body: <>Weekly summary · build on track · €0 over budget · 1 vote pending.</>,
+    highlight: false,
   },
 ];
 
@@ -63,7 +76,7 @@ export function Frame14_Agent() {
         {/* Notifications */}
         <div className="flex flex-col gap-[8px]">
           {NOTIFICATIONS.map((n, idx) => (
-            <Notification key={idx} when={n.when}>
+            <Notification key={idx} when={n.when} highlight={n.highlight}>
               {n.body}
             </Notification>
           ))}
@@ -76,14 +89,23 @@ export function Frame14_Agent() {
 function Notification({
   when,
   children,
+  highlight = false,
 }: {
   when: string;
   children: React.ReactNode;
+  highlight?: boolean;
 }) {
   return (
     <div
       className="rounded-[12px] px-[11px] py-[9px] text-[var(--color-bone)] backdrop-blur-md"
-      style={{ background: "rgba(244,239,230,0.12)" }}
+      style={{
+        background: highlight
+          ? "rgba(15,110,86,0.35)"
+          : "rgba(244,239,230,0.12)",
+        border: highlight
+          ? "0.5px solid rgba(159,225,203,0.4)"
+          : "none",
+      }}
     >
       <div className="mb-[4px] flex items-center gap-[6px]">
         <span
@@ -114,6 +136,22 @@ function Notification({
       >
         {children}
       </div>
+      {highlight && (
+        <div className="mt-[8px] flex gap-[6px]">
+          <div
+            className="flex-1 rounded-[6px] py-[5px] text-center text-[10px] font-medium"
+            style={{ background: "rgba(15,110,86,0.6)", color: "#9fe1cb" }}
+          >
+            Approve ¥176M
+          </div>
+          <div
+            className="flex-1 rounded-[6px] py-[5px] text-center text-[10px]"
+            style={{ background: "rgba(244,239,230,0.1)", color: "rgba(244,239,230,0.6)" }}
+          >
+            Review
+          </div>
+        </div>
+      )}
     </div>
   );
 }
